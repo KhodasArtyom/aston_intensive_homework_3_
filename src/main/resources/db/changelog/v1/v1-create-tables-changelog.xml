@@ -20,7 +20,7 @@
         <createTable tableName="categories">
             <column name="category_id" type="SERIAL">
                 <constraints primaryKey="true" nullable="false"/>
-            </column>
+             </column>
             <column name="name" type="VARCHAR(55)"/>
         </createTable>
     </changeSet>
