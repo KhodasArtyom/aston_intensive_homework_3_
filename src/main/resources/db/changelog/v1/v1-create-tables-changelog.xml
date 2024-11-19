@@ -1,0 +1,63 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+
+    <changeSet id="v1-1" author="Artyom_Khodas">
+        <createTable tableName="users">
+            <column name="user_id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(55)"/>
+            <column name="email" type="VARCHAR(100)">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="v1-2" author="Artyom_Khodas">
+        <createTable tableName="categories">
+            <column name="category_id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(55)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="v1-3" author="Artyom_Khodas">
+        <createTable tableName="products">
+            <column name="product_id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(55)"/>
+            <column name="price" type="DECIMAL(10,2)"/>
+            <column name="fk_category_id" type="INTEGER">
+                <constraints foreignKeyName="fk_category_id" references="categories(category_id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="v1-4" author="Artyom_Khodas">
+        <createTable tableName="orders">
+            <column name="order_id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="fk_user_id" type="INTEGER">
+                <constraints foreignKeyName="fk_user_id" references="users(user_id)"/>
+            </column>
+            <column name="date" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="v1-5" author="Artyom_Khodas">
+        <createTable tableName="products_orders">
+            <column name="fk_orders_id" type="INTEGER">
+                <constraints foreignKeyName="fk_order_id" references="orders(order_id)"/>
+            </column>
+            <column name="fk_products_id" type="INTEGER">
+                <constraints foreignKeyName="fk_products_id" references="products(product_id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
