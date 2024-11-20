@@ -1,14 +1,16 @@
-package com.artemhodas.aston_homework_3_.config;
+package com.artemhodas.aston_homework_3.config;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+
+import org.hibernate.SessionFactory;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
+
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,19 +42,17 @@ public class AppConfig {
 
         return dataSource;
     }
-
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setDataSource(dataSource());
-        factoryBean.setPackagesToScan("ваш.package.model"); // Укажите пакет, где находятся ваши сущности
-        factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        factoryBean.setJpaProperties(hibernateProperties());
-        return factoryBean;
-    }
+    public LocalSessionFactoryBean sessionFactory(){
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+       sessionFactory.setDataSource(dataSource());
+       sessionFactory.setPackagesToScan("com.artemhodas.aston_homework_3.entity");
+       sessionFactory.setHibernateProperties(hibernateProperties());
 
+        return sessionFactory;
+    }
     private java.util.Properties hibernateProperties() {
-        java.util.Properties properties = new java.util.Properties();
+        Properties properties = new Properties();
         properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         properties.put("hibernate.show_sql", "true"); //
         properties.put("hibernate.hbm2ddl.auto", "validate");
@@ -60,9 +60,9 @@ public class AppConfig {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+    public PlatformTransactionManager transactionManager(SessionFactory sessionFactory) {
+        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+        transactionManager.setSessionFactory(sessionFactory);
         return transactionManager;
     }
 }
